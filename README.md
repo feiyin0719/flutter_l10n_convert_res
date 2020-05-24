@@ -29,7 +29,8 @@ dev_dependencies:
   args: "^1.5.2"
   logging: "^0.11.3+2"
 ```
-
+`
 flutter pub pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs
+`
 其中-s为安卓xml文件目录  即values-* 所在的目录
 -o 为arbs文件输出目录
