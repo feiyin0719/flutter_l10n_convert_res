@@ -16,6 +16,20 @@ samples, guidance on mobile development, and a full API reference.
 一个flutter国际化工具，可以从安卓的strings.xml生成flutter的arb格式，配合https://github.com/long1eu/flutter_i18n  可以方便实现国际化
 
 ## 使用方法
-flutter package pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs
+添加依赖
+```yaml
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_l10n_convert_res:
+    git:
+      url:  https://github.com/feiyin0719/flutter_l10n_convert_res.git
+  xml:  "^3.6.1"
+  path: "^1.6.2"
+  args: "^1.5.2"
+  logging: "^0.11.3+2"
+```
+
+flutter pub pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs
 其中-s为安卓xml文件目录  即values-* 所在的目录
--o为arbs文件输出目录
+-o 为arbs文件输出目录
