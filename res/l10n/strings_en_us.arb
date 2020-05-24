@@ -1,0 +1,8 @@
+{
+    "cancel": "Cancel",
+    "dialog_button_ok": "OK",
+    "control_power_using_bixby_description_brief": "You can turn on your TV and set-top box at the same time by saying “$param1” or “$param2” $param3 $param4 %.",
+    "numberOfSongsAvailableZero": "$param1 songs found.",
+    "numberOfSongsAvailableOne": "$param1 song found.",
+    "numberOfSongsAvailableOther": "$param1 songs found."
+}

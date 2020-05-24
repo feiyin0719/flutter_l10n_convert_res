@@ -1,0 +1,12 @@
+<resources>
+    <!-- DREAM_ST_BUTTON_CANCEL_15 -->
+    <string name="cancel">Cancel</string>
+    <string name="dialog_button_ok">OK</string>
+    <string name="control_power_using_bixby_description_brief">You can turn on your TV and set-top box at the same time by saying “%1$s” or “%2$s” %d %.5f %.</string>
+    <plurals name="numberOfSongsAvailable">
+        <item quantity="zero">%d songs found.</item>
+        <item quantity="one">%d song found.</item>
+        <item quantity="other">%d songs found.</item>
+    </plurals>
+
+</resources>
