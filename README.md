@@ -24,10 +24,6 @@ dev_dependencies:
   flutter_l10n_convert_res:
     git:
       url:  https://github.com/feiyin0719/flutter_l10n_convert_res.git
-  xml:  "^3.6.1"
-  path: "^1.6.2"
-  args: "^1.5.2"
-  logging: "^0.11.3+2"
 ```
 `
 flutter pub pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs
