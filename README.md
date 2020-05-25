@@ -26,7 +26,7 @@ dev_dependencies:
       url:  https://github.com/feiyin0719/flutter_l10n_convert_res.git
 ```
 `
-flutter pub pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs
+flutter pub pub run flutter_l10n_convert_res:main -s assets/res -o assets/arbs -p strings
 `
 其中-s为安卓xml文件目录  即values-* 所在的目录
--o 为arbs文件输出目录
+-o 为arbs文件输出目录 -p 为输出文件前缀 默认为strings
