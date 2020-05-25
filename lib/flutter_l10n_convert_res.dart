@@ -3,21 +3,30 @@ library flutter_l10n_convert_res;
 import 'dart:io';
 
 import 'package:flutter_l10n_convert_res/log.dart';
+import 'package:path/path.dart' as Path;
 import 'package:xml/xml.dart' as xml;
 
 class ConvertMoudle {
   static final RegExp specifier = new RegExp(
       r'%(?:(\d+)\$)?([\+\-\#0 ]*)(\d+|\*)?(?:\.(\d+|\*))?([a-z%])',
       caseSensitive: false);
+  static const List<String> _pluralEnding = <String>[
+    'zero',
+    'one',
+    'two',
+    'few',
+    'many',
+    'other'
+  ];
 
-  static bool convert(Directory outputDir, Directory inputDir) {
+  static bool convert(Directory outputDir, Directory inputDir,
+      {String namePrefix = 'strings'}) {
     if (!inputDir.existsSync()) return false;
-    if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
     outputDir.createSync(recursive: true);
     List<FileSystemEntity> resFolders =
         inputDir.listSync(recursive: true).where((f) {
       return FileSystemEntity.isDirectorySync(f.path) &&
-          f.path.split(Platform.pathSeparator).last.startsWith('values') &&
+          Path.basename(f.path).startsWith('values') &&
           new File(f.path + Platform.pathSeparator + "strings.xml")
               .existsSync();
     }).toList();
@@ -25,21 +34,23 @@ class ConvertMoudle {
       log.info('No values* folder found in ${inputDir.path}.');
       return false;
     }
-
+    if (outputDir.existsSync()) outputDir.deleteSync(recursive: true);
     resFolders.forEach((f) {
       File xmlFile = new File(f.path + Platform.pathSeparator + "strings.xml");
       if (xmlFile.existsSync()) {
-        List<String> temp = f.path.split("-");
+        String folderName = Path.basename(f.path);
+        List<String> temp = folderName.split("-");
         String name = temp.last;
         if (temp.length <= 1) {
           name = 'en';
         }
-        if (name.length == 3)
+        if (name.length == 3 && name.startsWith("r"))
           name = '${temp[temp.length - 2]}_${name.toLowerCase().substring(1)}';
         Map<String, dynamic> stringsMap = parseXml(xmlFile);
-        File arbFile = new File(
-            outputDir.path + Platform.pathSeparator + "strings_$name.arb");
-        arbFile.createSync();
+        File arbFile = new File(outputDir.path +
+            Platform.pathSeparator +
+            "${namePrefix}_${name}.arb");
+        arbFile.createSync(recursive: true);
         writeToFile(arbFile, stringsMap);
       }
     });
@@ -49,18 +60,26 @@ class ConvertMoudle {
 
   static Map<String, dynamic> parseXml(File xmlFile) {
     xml.XmlDocument document = xml.parse(xmlFile.readAsStringSync());
-    List<xml.XmlElement> stringDocList =
-        document.findAllElements("string").toList();
-    Map<String, dynamic> stringMaps = new Map();
-    stringDocList.forEach((e) {
-      stringMaps.putIfAbsent(
-          e.attributes.first.value, () => convertStrings(e.firstChild.text));
-    });
-    List<xml.XmlElement> pluralsList =
-        document.findAllElements("plurals").toList();
+    Map<String, dynamic> stringMaps = document
+        .findAllElements("string")
+        .where((element) =>
+            element?.attributes?.isNotEmpty &&
+            element?.attributes?.first?.value != null &&
+            element?.firstChild?.text != null)
+        .toList()
+        .asMap()
+        .map((index, e) => new MapEntry(
+            e.attributes.first.value, convertStrings(e.firstChild.text)));
+
+    List<xml.XmlElement> pluralsList = document
+        .findAllElements("plurals")
+        .where((element) => element?.children?.isNotEmpty)
+        .toList();
     pluralsList.forEach((e) {
       e.findAllElements("item").forEach((child) {
-        if (child != null) {
+        if (child?.attributes?.isNotEmpty &&
+            _pluralEnding.contains(child?.attributes?.first?.value) &&
+            child?.text != null) {
           final pluralsName =
               child.attributes.first.value.substring(0, 1).toUpperCase() +
                   child.attributes.first.value.substring(1);
@@ -93,5 +112,6 @@ class ConvertMoudle {
 
     buffer.write("}");
     f.writeAsStringSync(buffer.toString(), flush: true);
+    return true;
   }
 }
